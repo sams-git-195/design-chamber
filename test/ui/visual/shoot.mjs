@@ -241,6 +241,17 @@ const railScenario = async (width, theme) => {
   check(await p.guest('return doc.documentElement.scrollWidth <= doc.documentElement.clientWidth'), `${tag}: no horizontal overflow in the list`);
   await p.shot(`${tag}-1-list`);
 
+  const selectedTab = () => p.guest('return doc.querySelector(".dc-tabs [role=tab][aria-selected=true]")?.dataset.id ?? null');
+  const rowCount = () => p.guest('return doc.querySelectorAll(".dc-row[data-slug]").length');
+  const allRows = await rowCount();
+  await p.click('.dc-tabs [role=tab]', { text: 'Canvases' });
+  await p.settle(150);
+  check((await selectedTab()) === 'canvas', `${tag}: clicking Canvases selects it`);
+  check(await p.guest('return [...doc.querySelectorAll(".dc-row[data-slug]")].every((n) => n.querySelector(".dc-row-meta")?.textContent.startsWith("Canvas"))'), `${tag}: Canvases lists only canvases`);
+  await p.click('.dc-tabs [role=tab]', { text: 'All' });
+  await p.settle(150);
+  check((await selectedTab()) === 'all' && (await rowCount()) === allRows, `${tag}: clicking All goes back to all designs`);
+
   await p.hover('.dc-row[data-slug="coffee-subscription"]');
   await p.click('.dc-row[data-slug="coffee-subscription"] .dc-iconbtn');
   await p.shot(`${tag}-2-row-menu`);

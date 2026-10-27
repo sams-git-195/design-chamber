@@ -57,6 +57,7 @@ export const mountListView = (options: ListViewOptions): ListViewHandle => {
   const tabsHost = h('div', { class: 'dc-tabs' });
   const tabsHandle = mountTabs(tabsHost, { items: LIST_TABS.map(({ id, label }) => ({ id, label })), activeId: tab, trackBackground: true, onChange: (id) => {
     tab = LIST_TABS.find((entry) => entry.id === id)?.id ?? 'all';
+    tabsHandle.update({ activeId: tab });
     paintList();
   } });
   const filters = h('div', { class: 'dc-rail-filters' }, searchHost, tabsHost);
