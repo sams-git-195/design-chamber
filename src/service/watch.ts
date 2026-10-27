@@ -81,7 +81,11 @@ export type WatcherOptions = {
   watchImpl?: typeof fsWatch;
 };
 
-export type Watcher = { stop(): void };
+export type Watcher = {
+  stop(): void;
+  /** Settles once the startup baseline is seeded; a folder created before then is part of it, not `added`. */
+  ready: Promise<void>;
+};
 
 /** Pending debounced batch per slug (`ROOT_KEY` = a whole-root rescan). */
 type PendingEntry = { files: Set<string>; timer: ReturnType<typeof setTimeout> };
@@ -279,13 +283,14 @@ export const startWatcher = (options: WatcherOptions): Watcher => {
   });
 
   startFsWatch();
-  seedScan().catch((error) => log.warn('watch.seed-failed', { error: error instanceof Error ? error.message : String(error) }));
+  const ready = seedScan().catch((error) => log.warn('watch.seed-failed', { error: error instanceof Error ? error.message : String(error) }));
   pollTimer = setInterval(() => {
     pollTick().catch((error) => log.warn('watch.poll-failed', { error: error instanceof Error ? error.message : String(error) }));
   }, pollMs);
   pollTimer.unref?.();
 
   return {
+    ready,
     stop() {
       if (stopped) return;
       stopped = true;
