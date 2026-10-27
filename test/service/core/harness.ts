@@ -95,6 +95,7 @@ export const createCore = async (t: TestContext, options: CoreOptions = {}): Pro
   if (options.watch) {
     const watchOptions = options.watch === true ? {} : options.watch;
     watcher = startWatcher({ settings, hub, log, ...watchOptions });
+    await watcher.ready;
   }
 
   return {

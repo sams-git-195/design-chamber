@@ -72,6 +72,8 @@ const makeWatchEnv = async (
     ...(options.watchImpl ? { watchImpl: options.watchImpl } : {}),
   });
   t.after(() => watcher.stop());
+  // Folders a test creates after this are changes, not part of the startup baseline.
+  await watcher.ready;
 
   const waitForEvent = async (predicate: (event: ChangeEvent) => boolean, timeoutMs = 4000): Promise<ChangeEvent> => {
     const deadline = Date.now() + timeoutMs;
