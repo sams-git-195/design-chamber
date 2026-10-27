@@ -1,0 +1,73 @@
+name: Bug report
+description: Something in Design Chamber doesn't work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Please remove personal paths, usernames and private design content
+        from logs and screenshots before posting (e.g. write `C:\Users\<you>\...` or `~/...`).
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+      placeholder: |
+        1. Typed `/design a pricing page` in a new chat
+        2. The agent wrote screens/pricing.html
+        3. Expected the artboard to refresh, but it stayed on "not written yet"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Rail panel / designs list
+        - Canvas wall (pan, zoom, artboards)
+        - Comments / pins
+        - Versions
+        - Artifact viewer / export
+        - /design, /artifact, Open as artifact
+        - Thumbnails
+        - Settings / Designs folder
+        - Agent instructions / design rules
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows
+        - macOS
+        - Fedora
+        - Ubuntu
+        - Other Linux
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: OpenChamber version and Design Chamber version (Settings → Extensions).
+      placeholder: OpenChamber 2.5.2, Design Chamber 0.1.0
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser used for thumbnails
+      description: Shown in Design Chamber Settings, e.g. "Chrome (detected)" or "Not found".
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error text
+      description: Any error toast text or service log lines. Redact personal paths.
+      render: text
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Drag images here. Blur or black out personal information.

@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- Mock OpenChamber host for the visual harness (shoot.mjs): sends `ready` with the openchamber-dark
+     or -light theme tokens and answers toast / clipboard / storage / open-url, recording them. -->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>mock host</title>
+    <style>
+      html, body { margin: 0; height: 100%; overflow: hidden; }
+      iframe { border: 0; width: 100%; height: 100%; display: block; }
+      #toasts { position: fixed; right: 12px; bottom: 12px; display: flex; flex-direction: column; gap: 6px; z-index: 9; font: 12px system-ui, sans-serif; }
+      .toast { padding: 8px 12px; border-radius: 8px; max-width: 360px; box-shadow: 0 6px 20px rgb(0 0 0 / .35); }
+    </style>
+  </head>
+  <body>
+    <iframe id="g" title="guest"></iframe>
+    <div id="toasts"></div>
+    <script>
+      const params = new URLSearchParams(location.search);
+      const surface = params.get('surface') || 'panel';
+      let mode = params.get('theme') === 'light' ? 'light' : 'dark';
+      const FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif";
+      const MONO = "'Cascadia Mono', Consolas, 'SF Mono', monospace";
+      // Values from openchamber-dark.json / openchamber-light.json (packages/ui/src/lib/theme/themes).
+      const THEMES = {
+        dark: { background: '#120f0e', elevated: '#1b1918', foreground: '#dbd7cc', muted: '#949187', subtle: '#171616', border: '#242323bf', hover: '#ffffff0f', selection: '#c8c6c52b', focus: '#da7c4755', primary: '#da7c47', mutedSurface: '#0e0c0b', elevatedForeground: '#dbd7cc', active: '#ffffff1a', selectionForeground: '#dbd7cc', primaryForeground: '#120f0e', primaryText: '#eb8c57', successText: '#8fc366', warningText: '#e0a040', errorText: '#ee7a6a', infoText: '#6bb4f0', success: '#76ad4f', warning: '#c67f13', error: '#da5b4a', info: '#479fe6' },
+        light: { background: '#fdfcfa', elevated: '#f3f2f0', foreground: '#44443d', muted: '#696960', subtle: '#f7f6f4', border: '#e5e1debf', hover: '#0000000a', selection: '#a9998f2b', focus: '#b3501755', primary: '#b35017', mutedSurface: '#f7f6f4', elevatedForeground: '#44443d', active: '#00000014', selectionForeground: '#44443d', primaryForeground: '#ffffff', primaryText: '#9a4310', successText: '#517734', warningText: '#886914', errorText: '#b7493f', infoText: '#2c6ebd', success: '#517734', warning: '#886914', error: '#b7493f', info: '#2c6ebd' },
+      };
+      const store = new Map();
+      window.__host = { toasts: [], clipboard: [], opened: [], setTheme: (next) => { mode = next; sendReady(); } };
+      const g = document.getElementById('g');
+      const send = (message) => g.contentWindow.postMessage({ channel: 'openchamber.sdk', v: 1, ...message }, '*');
+      const ready = () => ({
+        theme: { mode, tokens: { ...THEMES[mode], font: FONT, mono: MONO, radius: '0.5625rem' } },
+        locale: 'en-US',
+        directory: 'C:\\Users\\you\\Documents\\GitHub\\ember-oak',
+        session: { id: 'ses_current', title: 'Pricing page', busy: false },
+        surface,
+        connection: { connected: false, account: '' },
+        settings: {},
+        item: null,
+        features: { deviceStorage: true },
+      });
+      function sendReady() { send({ type: 'ready', payload: ready() }); }
+      window.addEventListener('message', (event) => {
+        if (event.source !== g.contentWindow) return;
+        const m = event.data;
+        if (!m || m.channel !== 'openchamber.sdk') return;
+        if (m.type === 'hello') { sendReady(); return; }
+        const ok = (payload) => send({ type: 'result', id: m.id, ok: true, payload });
+        if (m.type === 'toast') {
+          window.__host.toasts.push(m.payload);
+          const el = document.createElement('div');
+          el.className = 'toast';
+          el.textContent = m.payload.message;
+          el.style.cssText += `background:${THEMES[mode].elevated};color:${THEMES[mode].foreground};border:1px solid ${THEMES[mode].border}`;
+          document.getElementById('toasts').append(el);
+          setTimeout(() => el.remove(), 4000);
+          ok({});
+        } else if (m.type === 'clipboard-write') { window.__host.clipboard.push(m.payload.text); ok({}); }
+        else if (m.type === 'open-url') { window.__host.opened.push(m.payload.url); ok({}); }
+        else if (m.type === 'storage') {
+          const p = m.payload;
+          if (p.op === 'get') ok(store.has(p.key) ? { storage: true, op: 'get', found: true, value: store.get(p.key) } : { storage: true, op: 'get', found: false });
+          else if (p.op === 'set') { store.set(p.key, p.value); ok({ storage: true, op: 'set' }); }
+          else ok({ storage: true, op: p.op, keys: [...store.keys()] });
+        } else if (m.id) ok({});
+      });
+      g.src = '/panel/index.html';
+    </script>
+  </body>
+</html>

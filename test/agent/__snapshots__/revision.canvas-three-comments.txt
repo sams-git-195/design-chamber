@@ -1,0 +1,15 @@
+[Design Chamber] Revise "Checkout redesign" — 3 comments. Folder: C:\Users\you\Documents\Designs\checkout-redesign. Rules: C:\Users\you\Documents\Designs\checkout-redesign\.chamber\RULES.md
+Change only what the comments ask; keep everything else. Update design.json "updated". Reply per comment number.
+1. Screen "Home" (screens/home.html) @ Laptop 1280×800
+   element: `main > section.hero > h1`
+   text: "Ship faster than ever before"  html: `<h1 class="hero-title">`
+   → Make this shorter
+2. Screen "Payment" (screens/pay.html) @ Phone 390×844
+   element: `#pay-now` (moved — matched by text)
+   text: "Pay now"  html: `<button id="pay-now" class="btn">`
+   → Button too small.
+   Make it 48px tall.
+3. Screen "Home" (screens/home.html) @ Laptop 1280×800
+   element: `footer > p.legal` (not found in current file)
+   text: "Terms apply"  html: `<p class="legal">`
+   → Remove the legal line.

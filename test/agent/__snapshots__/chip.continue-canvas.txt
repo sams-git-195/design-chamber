@@ -1,0 +1,15 @@
+[Design Chamber] Continue canvas: "Pricing page for a coffee subscription"
+Brief (the user's words, original):
+A pricing page for a coffee subscription. Three plans, mobile first.
+State: 3 screens (home, pricing, checkout).
+Write ONLY inside this folder: C:\Users\you\Documents\Designs\pricing-page
+
+1. FIRST read, in full: C:\Users\you\Documents\Designs\pricing-page\.chamber\RULES.md
+   It is part of this message — the complete design rules, the ask-when-unsure protocol and the design.json contract. Design nothing before you have read it.
+2. THEN look for the active project's own design rules before designing: Design Chamber found these in C:\Users\you\code\beans: DESIGN.md, tailwind.config.ts, AGENTS.md. Read them yourself and follow them; also search for anything it missed (RULES.md, "Discover the project's design rules first").
+3. Precedence, highest first — never silently override a higher layer: the user's words in this chat · the project's design rules (step 2) · style preset (none chosen) · this design's DESIGN.md + tokens.css once confirmed · the built-in rules in RULES.md.
+4. Viewports: this design shows Laptop 1280×800, Phone 390×844. Change them only if the user asks, and keep design.json "viewports" in step with what you build.
+5. Unsure about anything material? Ask first: ONE message with 3–6 short numbered questions, each with a bold recommended default, then wait for the answer. Do not ask what the project files already answer; skip the questions if the user said "go" or this is a small edit.
+6. Files you write: design.json · screens/<id>.html (one self-contained, responsive file per screen) · tokens.css · DESIGN.md · assets/** (relative paths, no CDNs). Never touch .versions/, .chamber/ or .thumb.png.
+7. design.json: you own title, updated, viewports, screens and designSystem — keep every other key exactly as it is, and set "updated" (ISO time) whenever you change the design. Full contract in RULES.md.
+Your file tools may ask permission to write in the Designs folder because it is outside the project; that is expected.

@@ -1,0 +1,13 @@
+[Design Chamber] New artifact: "Pricing page"
+Brief: none — ask the user what to design.
+Write ONLY inside this folder: C:\Users\you\Documents\Designs\pricing-page
+
+1. FIRST read, in full: C:\Users\you\Documents\Designs\pricing-page\.chamber\RULES.md
+   It is part of this message — the complete design rules, the ask-when-unsure protocol and the design.json contract. Design nothing before you have read it.
+2. THEN look for the active project's own design rules before designing: No project folder is open in this chat (the chat has no project folder). Ask the user whether an existing codebase or brand should be followed before you invent a look.
+3. Precedence, highest first — never silently override a higher layer: the user's words in this chat · the project's design rules (step 2) · style preset (none chosen) · this design's DESIGN.md + tokens.css once confirmed · the built-in rules in RULES.md.
+4. Viewports — settle them before designing. The project gave no breakpoints, so ask which to show unless the brief makes it obvious, and recommend Laptop 1280×800 + Phone 390×844.
+5. Unsure about anything material? Ask first: ONE message with 3–6 short numbered questions, each with a bold recommended default, then wait for the answer. Do not ask what the project files already answer; skip the questions if the user said "go" or this is a small edit.
+6. Files you write: design.json · index.html (one self-contained page) · tokens.css · DESIGN.md · assets/** (relative paths, no CDNs). Never touch .versions/, .chamber/ or .thumb.png.
+7. design.json: you own title, updated, viewports and designSystem — keep every other key exactly as it is, and set "updated" (ISO time) whenever you change the design. Full contract in RULES.md.
+Your file tools may ask permission to write in the Designs folder because it is outside the project; that is expected.

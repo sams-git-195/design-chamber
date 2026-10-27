@@ -1,0 +1,62 @@
+# Gates for every merge into master: typecheck + build + tests via `npm run check` on Ubuntu,
+# Windows and Fedora. Node 22.x (≥ 22.18 strips TypeScript natively for node:test).
+# macOS is not run here (10x runner cost): run `npm run check` on a Mac before merging
+# macOS-affecting changes (docs/testing/MACOS.md).
+# Chrome is preinstalled on the ubuntu and Windows images, so the thumbnail and e2e tests run
+# there; the Fedora container has no browser and those tests skip with a reason.
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+      - name: Tool versions
+        shell: bash
+        run: |
+          node --version
+          npm --version
+          node -e "const [a,b]=process.versions.node.split('.').map(Number); if (a < 22 || (a === 22 && b < 18)) { console.error('Node >= 22.18 is required'); process.exit(1); }"
+      - name: Browser for thumbnail tests
+        shell: bash
+        run: node --input-type=module -e "import { resolveBrowser } from './src/service/chrome.ts'; console.log(JSON.stringify(resolveBrowser({})));"
+      - run: npm ci
+      - run: npm run check
+
+  fedora:
+    name: check (fedora:latest)
+    runs-on: ubuntu-latest
+    container: fedora:latest
+    timeout-minutes: 30
+    steps:
+      # git for actions/checkout; unzip for the system-unzip ZIP test.
+      - name: Install Node.js and tools
+        run: dnf install -y --setopt=install_weak_deps=False nodejs npm git unzip
+      - uses: actions/checkout@v4
+      - name: Tool versions
+        run: |
+          cat /etc/fedora-release
+          node --version
+          npm --version
+          node -e "const [a,b]=process.versions.node.split('.').map(Number); if (a < 22 || (a === 22 && b < 18)) { console.error('Node >= 22.18 is required; Fedora shipped ' + process.versions.node); process.exit(1); }"
+      - run: npm ci
+      - run: npm run check

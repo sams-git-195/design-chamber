@@ -1,0 +1,43 @@
+{
+  "name": "design-chamber",
+  "version": "0.1.0",
+  "description": "Design Chamber — design canvases and HTML artifacts written by your chat agent, rendered inside OpenChamber.",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "openchamber": {
+    "apiVersion": 1,
+    "engines": { "openchamber": ">=2.5.0" },
+    "contributes": {
+      "panel": { "id": "design-chamber", "name": "Design Chamber", "icon": "palette", "entry": "dist/panel/index.html" },
+      "page": { "entry": "dist/panel/index.html", "title": "Design Chamber" },
+      "background": { "entry": "dist/background/index.html" },
+      "commands": [
+        { "name": "design", "description": "New design canvas: attach design rules, folder and contract" },
+        { "name": "artifact", "description": "New HTML artifact: attach design rules, folder and contract" }
+      ],
+      "actions": [
+        { "id": "open-as-artifact", "label": "Open as artifact", "icon": "palette", "where": "message", "roles": ["assistant"], "mode": "background" }
+      ],
+      "capabilities": ["prompt", "sessions"],
+      "service": {
+        "entry": "dist/service/main.js",
+        "runtime": "host",
+        "permissions": { "exec": ["chrome", "msedge", "chromium", "brave", "explorer", "open", "xdg-open", "gio", "gdbus"] }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test --test-concurrency=1 \"test/**/*.test.ts\"",
+    "check": "npm run typecheck && npm run build && npm test",
+    "pack": "node scripts/pack.mjs"
+  },
+  "devDependencies": {
+    "@openchamber/sdk": "2.5.2",
+    "@types/node": "^22.10.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.8.0"
+  }
+}

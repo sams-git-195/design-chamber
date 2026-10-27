@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output (npm run build) and release zips (npm run pack)
+dist/
+*.zip
+
+# Test scratch
+.tmp/
+
+# Local secrets (none expected)
+.env
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Smoke-test scratch designs root (documentation/smoke/** holds the committed evidence)
+.smoke/
+.openchamber/

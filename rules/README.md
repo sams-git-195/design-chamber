@@ -1,0 +1,5 @@
+# rules/
+
+Agent-facing design instructions for Design Chamber. `DESIGN-RULES.md` is the core instruction (precedence, anti-slop, best practices, file rules, self-check) and `QUESTIONS.md` is the ask-when-unsure protocol; both are attached to every `/design` (and artifact) prompt together with the target folder and the `design.json` contract. `presets/<id>.md` are optional named style presets: only the preset the user picked at creation is attached (and its CSS block seeds the design's `tokens.css`/`DESIGN.md`); the rest exist so the agent can offer them as directions. The extension/spec defines the exact assembly order and any trimming; these files are plain markdown, written to be read verbatim by the agent, and must stay tight.
+
+Presets: editorial · minimal-saas · brutalist · warm-craft · data-dense-dashboard · playful · luxury · technical-mono · poster-print · nocturne. All share one token vocabulary (`--bg --surface --surface-2 --fg --fg-muted --border --accent --accent-fg --success --warning --danger --font-display --font-body --font-mono --radius-* --space-* --shadow-1`).
