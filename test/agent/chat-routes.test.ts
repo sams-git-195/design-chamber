@@ -402,7 +402,8 @@ describe('RULES.md writer and the onCreate hook', () => {
     const past = new Date(Date.now() - 60_000);
     await utimes(file, past, past);
     await writeRulesFile(tmp.at('d'), 'one\n');
-    assert.equal((await stat(file)).mtimeMs, past.getTime(), 'unchanged bytes are not rewritten');
+    // Rounded: ext4 keeps nanoseconds, so mtimeMs can come back as …701.999 for …702.
+    assert.equal(Math.round((await stat(file)).mtimeMs), past.getTime(), 'unchanged bytes are not rewritten');
     await writeRulesFile(tmp.at('d'), 'two\n');
     assert.equal(await readFile(file, 'utf8'), 'two\n');
     assert.deepEqual(await readdir(tmp.at('d/.chamber')), ['RULES.md']);
