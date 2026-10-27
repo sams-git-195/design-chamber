@@ -2,8 +2,8 @@
 # Windows and Fedora. Node 22.x (≥ 22.18 strips TypeScript natively for node:test).
 # macOS is not run here (10x runner cost): run `npm run check` on a Mac before merging
 # macOS-affecting changes (docs/testing/MACOS.md).
-# Chrome is preinstalled on the ubuntu and Windows images, so the thumbnail and e2e tests run
-# there; the Fedora container has no browser and those tests skip with a reason.
+# Browser, thumbnail and e2e tests run everywhere: Chrome is preinstalled on the ubuntu and
+# Windows images; the Fedora job installs Fedora's Chromium and runs as a non-root user.
 name: CI
 
 on:
@@ -45,18 +45,33 @@ jobs:
   fedora:
     name: check (fedora:latest)
     runs-on: ubuntu-latest
-    container: fedora:latest
+    container:
+      image: fedora:latest
+      # Chromium's sandbox needs user namespaces, which Docker's default seccomp profile blocks.
+      options: --security-opt seccomp=unconfined
     timeout-minutes: 30
     steps:
-      # git for actions/checkout; unzip for the system-unzip ZIP test.
-      - name: Install Node.js and tools
-        run: dnf install -y --setopt=install_weak_deps=False nodejs npm git unzip
+      # git for actions/checkout; unzip for the system-unzip ZIP test; Fedora's own Chromium
+      # (`chromium-browser`) so the browser, thumbnail and e2e tests run here too.
+      - name: Install Node.js, Chromium and tools
+        run: dnf install -y --setopt=install_weak_deps=False nodejs npm git unzip chromium
       - uses: actions/checkout@v4
+      # Tests run as a normal user, like a real desktop: no root-only --no-sandbox path, and the
+      # posix permission test is not skipped.
+      - name: Create a non-root user
+        run: |
+          useradd -m ci
+          chown -R ci:ci "$GITHUB_WORKSPACE"
       - name: Tool versions
         run: |
           cat /etc/fedora-release
           node --version
           npm --version
+          chromium-browser --version
           node -e "const [a,b]=process.versions.node.split('.').map(Number); if (a < 22 || (a === 22 && b < 18)) { console.error('Node >= 22.18 is required; Fedora shipped ' + process.versions.node); process.exit(1); }"
-      - run: npm ci
-      - run: npm run check
+      - name: Browser for thumbnail tests
+        run: su ci -c "node --input-type=module -e \"import { resolveBrowser } from './src/service/chrome.ts'; console.log(JSON.stringify(resolveBrowser({})));\""
+      - name: npm ci (as ci)
+        run: su ci -c "npm ci"
+      - name: npm run check (as ci)
+        run: su ci -c "npm run check"

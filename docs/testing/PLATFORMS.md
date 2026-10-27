@@ -154,7 +154,7 @@ Local evidence before CI existed (2026-10-27, Docker on the Windows dev machine)
 |---|---|---|---|---|---|
 | Windows 11 (host) | 24.21.0 | 561 | 560 | 0 | 1 (chmod permission test, posix-only) |
 | `node:22` (Debian), non-root, no browser | 22.23.4 | 561 | 551 | 0 | 10 (9 browser tests, 1 win32-only) |
-| `fedora:latest` (Fedora 44), root, no browser — like CI | 22.23.1 | 561 | 550 | 0 | 11 (+ chmod test: root reads anything) |
+| `fedora:latest` (Fedora 44), root, no browser — CI before 2026-10-27 (CI now: Chromium, non-root) | 22.23.1 | 561 | 550 | 0 | 11 (+ chmod test: root reads anything) |
 | `fedora:latest` + `dnf install chromium` (156), root — the 24 browser/e2e tests | 22.23.1 | 24 | 24 | 0 | 0 |
 
 The Chromium run first failed: the tests' own browser launches lacked `--no-sandbox` as root,
